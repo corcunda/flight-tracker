@@ -1,53 +1,47 @@
 <template>
     <div>
-        <h1>Login</h1>
-        <!-- <router-link to="/dashboard">Go to Dashboard</router-link> -->
 
-        
-        
-
-
-        <!-- Email and Password input fields -->
-        <div>
-            <label for="email">Email:</label>
-            <input 
-                type="email" 
-                id="email" 
-                v-model="email" 
-                placeholder="Enter your email" 
-                required 
-            />
+        <div class="login-wrapper">
+            <div class="field-wrapper">
+                <label for="email">Email:</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    v-model="email" 
+                    placeholder="Enter your email" 
+                    required 
+                />
+            </div>
+            <div class="field-wrapper">
+                <label for="password">Password:</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    v-model="password" 
+                    placeholder="Enter your password" 
+                    required 
+                />
+            </div>
+            <button @click="login">Login</button>
         </div>
-        <div>
-            <label for="password">Password:</label>
-            <input 
-                type="password" 
-                id="password" 
-                v-model="password" 
-                placeholder="Enter your password" 
-                required 
-            />
-        </div>
-
-        <button @click="login">Login</button>
-
-
 
     </div>
 </template>
 
 <script>
+import { useCoreStore } from '@/stores/core';
 import { useAuthStore } from '@/stores/auth';
 export default {
     name: 'Login',
     setup() {
+        const coreStore = useCoreStore();
         const authStore = useAuthStore();
 
-        return { authStore };
+        return { coreStore, authStore };
     },
     data() {
         return {
-            email: 'joao@idwebstudio.com',
+            email: 'admin@admin.com',
             password: 'admin',
         };
     },
@@ -56,13 +50,29 @@ export default {
     },
     methods: {
         async login() {
+            this.coreStore.isLoading = true;
             try {
                 await this.authStore.login({ email: this.email, password: this.password });
                 this.$router.push('/dashboard');
             } catch (error) {
                 console.error('Login failed:', error.response.data);
+            } finally {
+                this.coreStore.isLoading = false;
             }
         },
     },
 };
 </script>
+<style scoped>
+.login-wrapper{
+    background: #fff;
+    border-radius: 6px;
+    width: 340px;
+    padding: 40px;
+    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, .1);
+    top: calc(50% - 80px);
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+</style>

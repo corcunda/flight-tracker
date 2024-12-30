@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { defineStore } from 'pinia';
 import { getURLAPI } from '@/helpers/utils';
-import { useUserStore } from '@/stores/user'; // Import user store
+import { useCoreStore } from '@/stores/core';
 
 export const useAuthStore = defineStore('auth', {
     state: () => ({
@@ -39,8 +39,9 @@ export const useAuthStore = defineStore('auth', {
                         this.updateToken(token);
                         this.updateIsAuthenticated(true);
 
-                        const userStore = useUserStore();
-                        userStore.user = response.data.data.user;
+                        const coreStore = useCoreStore();
+                        coreStore.user = response.data.data.user;
+                        localStorage.setItem('user', JSON.stringify(coreStore.user));
 
                         resolve(response.data);
                     })
@@ -57,9 +58,10 @@ export const useAuthStore = defineStore('auth', {
                             this.updateToken(null);
                             this.updateIsAuthenticated(false);
                             localStorage.removeItem('auth');
+                            localStorage.removeItem('user');
 
-                            const userStore = useUserStore();
-                            userStore.user = null;
+                            const coreStore = useCoreStore();
+                            coreStore.user = null;
                             resolve(response.data.data);
                         },
                     )

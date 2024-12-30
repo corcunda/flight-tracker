@@ -4,9 +4,10 @@ import { useAuthStore } from '@/stores/auth';
 import { getURLAPI } from '@/helpers/utils';
 import { useRouter } from 'vue-router';
 
-export const useUserStore = defineStore('user', {
+export const useCoreStore = defineStore('user', {
     state: () => ({
-        user: null,
+        user: JSON.parse(localStorage.getItem('user')) || null,
+        isLoading: false,
     }),
     actions: {
         async fetchUser() {
@@ -18,7 +19,8 @@ export const useUserStore = defineStore('user', {
                     const response = await axios.get(url, {
                         headers: authStore.getHeader,
                     });
-                    this.user = response.data;
+                    this.user = response.data.data.user;
+                    localStorage.setItem('user', JSON.stringify(this.user));
                 } catch (error) {
                     console.error('Error fetching user info:', error);
                     this.user = null;

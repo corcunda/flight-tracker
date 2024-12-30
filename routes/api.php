@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\FlightController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,15 +24,21 @@ Route::middleware(['correct.headers'])->group(function () {
         Route::post('',         [UserController::class, 'store']);
     });
 
-    Route::middleware(['auth:api', 'correct.headers'])->group(function () {
+    Route::middleware(['auth:api'])->group(function () {
 
+        
         Route::post('/logout', [AuthController::class, 'logout']);
 
-        Route::prefix('users')->name('users.')->group(function () {
+        Route::prefix('user')->name('user.')->group(function () {
+            Route::get('me',        [UserController::class, 'findMe']);
             Route::get('{id?}',     [UserController::class, 'index']);
+            
+
             // Route::put('{id}',   [UserController::class, 'update']);
             Route::delete('',       [UserController::class, 'destroy']);
         });
+
+        Route::get('/broadcast',     [FlightController::class, 'updateFlight']);
 
     });
 

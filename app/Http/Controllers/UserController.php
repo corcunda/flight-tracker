@@ -68,6 +68,26 @@ class UserController extends Controller
 
 
     /**
+     * Retrieve the authenticated user's information.
+     *
+     * This method returns the data of the currently authenticated user. It
+     * uses the API token passed in the Authorization header to identify the
+     * user, and responds with the user's information in a structured format.
+     * 
+     * @authenticated
+     * @param \Illuminate\Http\Request $request The incoming HTTP request, including the authenticated user.
+     * @return \Illuminate\Http\JsonResponse A JSON response containing the authenticated user's data.
+     *
+     * @throws \Illuminate\Auth\AuthenticationException If the user is not authenticated.
+     */
+    public function findMe(Request $request)
+    {
+        $user = $request->user();
+        return Controller::APIJsonReturn(['user' => $user], 'success');
+    }
+
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request     $request

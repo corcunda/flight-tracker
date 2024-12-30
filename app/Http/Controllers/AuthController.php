@@ -9,7 +9,10 @@ class AuthController extends Controller
 {
 
     /**
+     * Login user by creating an anthenticated token.
      * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function login(Request $request)
     {
@@ -19,28 +22,30 @@ class AuthController extends Controller
             $user = Auth::user();
             $token = $user->createToken('API Token')->accessToken;
 
-            return response()->json([
-                'message' => 'Login successful',
+            $data = [
                 'token' => $token,
                 'user' => $user,
-            ], 200);
+            ];
+            return Controller::APIJsonReturn($data, 'success');
         }
 
-        return response()->json([
-            'message' => 'Invalid credentials',
-        ], 401);
+        return Controller::APIJsonReturn(['user' => 'Invalid credentials'], 'error', 401);
     }
 
 
     /**
+     * Logout user by revoking his current token.
      * 
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
     public function logout(Request $request)
     {
-        $request->user()->token()->revoke(); // Revoke the current token
-        return response()->json([
-            'message' => 'Logged out successfully',
-        ], 200);
+        $request->user()->token()->revoke();
+        $data = [
+            'user' => 'Logged out successfully'
+        ];
+        return Controller::APIJsonReturn($data, 'success');
     }
 
 }
