@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Http\Resources\UserResource;
+use Vinkla\Hashids\Facades\Hashids;
 
 class UserController extends Controller
 {
@@ -51,12 +53,22 @@ class UserController extends Controller
                 else                { $users = $users->orderBy('name', 'asc')->get(); }                // get all results
 
             } else {
-                $users  = User::find($id);
+                $decodedId = Hashids::decode($id);
+                if( !count($decodedId) ) {
+                    return Controller::APIJsonReturn(['id' => 'User not found.'], 'error', 400);
+                }
+                $users  = User::find($decodedId[0]);
                 if( !$users ) {
                     return Controller::APIJsonReturn(['id' => 'User not found.'], 'error', 400);
                 }
             }
-            $data['users']  = $users;
+
+            // $data['users']  = $users;
+            if ($users instanceof \Illuminate\Database\Eloquent\Collection || $users instanceof \Illuminate\Pagination\LengthAwarePaginator) {
+                $data['users'] = UserResource::collection($users); // Paginated or non-paginated collection
+            } else {
+                $data['users'] = new UserResource($users); // Single user (in case of non-paginated result with one user)
+            }
 
             return Controller::APIJsonReturn($data, 'success');
 

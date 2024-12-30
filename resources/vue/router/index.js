@@ -8,12 +8,13 @@ const routes = [
         path: '/',
         name: 'Login',
         component: Login,
+        meta: { title: 'Login' },
     },
     {
         path: '/dashboard',
         name: 'Dashboard',
         component: Dashboard,
-        meta: { requiresAuth: true },
+        meta: { title: 'Dashboard', requiresAuth: true },
     },
 ];
 
@@ -26,6 +27,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     const auth = useAuthStore();
+
+    // Set the document title from route meta or fallback to a default title
+    if (to.meta && to.meta.title) {
+        document.title = to.meta.title;
+    } else {
+        document.title = 'Default Title'; // Fallback title
+    }
+
+
     // Redirect logged-in users away from Login page
     if (to.name === 'Login' && auth.isAuthenticated) {
         next({ name: 'Dashboard' });
