@@ -39,6 +39,8 @@ export const useAuthStore = defineStore('auth', {
                         this.updateToken(token);
                         this.updateIsAuthenticated(true);
 
+                        // console.log('Logged', response.data.data.user);
+
                         const coreStore = useCoreStore();
                         coreStore.user = response.data.data.user;
                         localStorage.setItem('user', JSON.stringify(coreStore.user));

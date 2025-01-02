@@ -42,6 +42,12 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+body, html{
+    margin: 0;
+    padding: 0;
+    /*height: 100%;*/
+    height: auto;
+}
 body{
     background: #f4f4f4;
     margin: 0;
@@ -88,6 +94,10 @@ button{
 h1 {
     color: #00b4ff;
     color: #c932ff;
+}
+.ui.toast-container.top.right,
+.ui.toast-container.top.left{
+    top: 85px !important;
 }
 </style>
 <style scoped>

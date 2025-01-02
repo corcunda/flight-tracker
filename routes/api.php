@@ -32,13 +32,17 @@ Route::middleware(['correct.headers'])->group(function () {
         Route::prefix('user')->name('user.')->group(function () {
             Route::get('me',        [UserController::class, 'findMe']);
             Route::get('{id?}',     [UserController::class, 'index']);
-            
-
             // Route::put('{id}',   [UserController::class, 'update']);
             Route::delete('',       [UserController::class, 'destroy']);
         });
 
-        Route::get('/broadcast',     [FlightController::class, 'updateFlight']);
+        Route::prefix('flight')->name('flight.')->group(function () {
+            Route::post('',                 [FlightController::class, 'store']);
+            Route::post('simulate/start',   [FlightController::class, 'simulateStart']);
+            // Route::post('simulate/end',     [FlightController::class, 'simulateEnd']);
+        });
+
+        // Route::get('/broadcast',     [FlightController::class, 'updateFlight']);
 
     });
 
