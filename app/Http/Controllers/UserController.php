@@ -95,7 +95,7 @@ class UserController extends Controller
     public function findMe(Request $request)
     {
         $user = $request->user();
-        return Controller::APIJsonReturn(['user' => $user], 'success');
+        return Controller::APIJsonReturn(['user' => new UserResource($user)], 'success');
     }
 
 
