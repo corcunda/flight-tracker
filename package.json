@@ -12,6 +12,8 @@
     },
     "dependencies": {
         "@vitejs/plugin-vue": "^5.2.1",
+        "fomantic-ui-css": "^2.9.3",
+        "jquery": "^3.7.1",
         "laravel-echo": "^1.17.1",
         "leaflet": "^1.9.4",
         "pinia": "^2.3.0",
