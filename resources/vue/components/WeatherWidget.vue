@@ -87,6 +87,8 @@ export default {
                 })
                 .catch(error => {
                     console.log('Error fetching weather:', error);
+                    clearInterval(this.intervalId);
+                    this.$showToast('Error', `Problem fetching the weather`, 'error', 'times');
                 })
                 .finally(() => {
                     // vm.coreStore.isLoading = false;
