@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth';
 import { getURLAPI } from '@/helpers/utils';
 import { useRouter } from 'vue-router';
 
-export const useCoreStore = defineStore('user', {
+export const useCoreStore = defineStore('core', {
     state: () => ({
         user: JSON.parse(localStorage.getItem('user')) || null,
         isLoading: false,
@@ -35,5 +35,24 @@ export const useCoreStore = defineStore('user', {
                 routerw.push({ name: 'Login' });
             }
         },
+
+        // Weather functionality
+        async fetchWeather(city, country = null) {
+            const url = getURLAPI() + `/weather`;
+            const authStore = useAuthStore();
+            return new Promise((resolve, reject) => {
+                axios.get(url, {
+                    headers: authStore.getHeader,
+                    params: { city, country },
+                })
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+            });
+        },
+
     },
 });
