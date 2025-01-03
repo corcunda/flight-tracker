@@ -24,8 +24,9 @@ export default {
     name: 'WeatherWidget',
     setup() {
         const coreStore = useCoreStore();
+        let intervalId = null; // Store the interval ID
 
-        return { coreStore };
+        return { coreStore, intervalId };
     },
     data() {
         return {
@@ -58,6 +59,12 @@ export default {
     mounted() {
         this.init();
     },
+    beforeUnmount() {
+        if (this.intervalId) {
+            clearInterval(this.intervalId); // Clear the interval
+            console.log('Weather widget interval cleared');
+        }
+    },
     methods: {
         // Shuffle the cities array
         randomizeCities() {
@@ -66,7 +73,7 @@ export default {
         init() {
             this.randomizeCities();
             this.fetchNextCityWeather();
-            setInterval(this.fetchNextCityWeather, 12000);
+            this.intervalId = setInterval(this.fetchNextCityWeather, 10000);
         },
         fetchNextCityWeather() {
             let vm = this;

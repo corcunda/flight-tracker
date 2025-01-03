@@ -8,14 +8,13 @@
                 <button v-if="authStore.isAuthenticated" @click="logout">Logout</button>
             </div>
         </header>
-        <WeatherWidget v-if="coreStore.user" />
     </div>
 </template>
   
 <script>
 import { useCoreStore } from '@/stores/core';
 import { useAuthStore } from '@/stores/auth';
-import WeatherWidget from "@/components/WeatherWidget.vue";
+
 export default {
     name: 'Header',
     setup() {
@@ -25,7 +24,7 @@ export default {
         return { coreStore, authStore };
     },
     components: {
-        WeatherWidget,
+        
     },
     data() {
         return {
