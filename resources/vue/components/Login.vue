@@ -56,6 +56,7 @@ export default {
                 this.$router.push('/dashboard');
             } catch (error) {
                 console.error('Login failed:', error.response.data);
+                this.$showToast(null, 'E-mail or password incorrect', 'error', null);
             } finally {
                 this.coreStore.isLoading = false;
             }

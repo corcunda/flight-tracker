@@ -12,7 +12,7 @@ class WeatherController extends Controller
 
     public function __construct()
     {
-        $this->apiKey = env('OPENWEATHER_API_KEY', 'a947128fa953f5ccf4ebd61513900d11');
+        $this->apiKey = env('OPENWEATHER_API_KEY', 'default_api_key');
     }
 
     /**

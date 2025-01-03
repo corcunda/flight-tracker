@@ -73,22 +73,21 @@ class FlightController extends Controller
                 DB::table('failed_jobs')->truncate();
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to stop jobs or truncate job tables: ' . $e->getMessage()], 500);
+            return Controller::APIJsonReturn(['error' => 'Failed to stop jobs or truncate job tables'], $e->getMessage(), 500);
         }
 
         // 2 - Update all flight statuses to 'in_progress'
         try {
-            // DB::table('flights')->update(['status' => 'in_progress']);
             DB::table('flights')->truncate();
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to truncate flight statuses: ' . $e->getMessage()], 500);
+            return Controller::APIJsonReturn(['error' => 'Failed to truncate flight statuses'], $e->getMessage(), 500);
         }
 
         // 3 - Truncate the flight_positions table
         try {
             DB::table('flight_positions')->truncate();
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to truncate flight_positions table: ' . $e->getMessage()], 500);
+            return Controller::APIJsonReturn(['error' => 'Failed to truncate flight_positions table:'], $e->getMessage(), 500);
         }
 
         FlightService::createFlightRoutes();
@@ -97,17 +96,17 @@ class FlightController extends Controller
         try {
             UpdateFlightPosition::dispatch();
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to dispatch UpdateFlightPosition job: ' . $e->getMessage()], 500);
+            return Controller::APIJsonReturn(['error' => 'Failed to dispatch UpdateFlightPosition job'], $e->getMessage(), 500);
         }
 
         // 5 - Restart the queue workers to process new jobs
         try {
             exec('php artisan queue:work --daemon --tries=3 > /dev/null 2>&1 &');
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to restart queue workers: ' . $e->getMessage()], 500);
+            return Controller::APIJsonReturn(['error' => 'Failed to restart queue workers'], $e->getMessage(), 500);
         }
 
-        return response()->json(['success' => 'Simulation started successfully.']);
+        return Controller::APIJsonReturn(['success' => true], 'success', 200);
     }
 
 
