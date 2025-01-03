@@ -48,7 +48,7 @@ export default {
     methods: {
 
         initializeMap() {
-            this.map = L.map('map').setView([54.5, -3], 6);
+            this.map = L.map('map').setView([45.0, -30.0], 3);
 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 // attribution: '&copy; OpenStreetMap contributors',

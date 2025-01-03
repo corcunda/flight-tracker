@@ -32,7 +32,7 @@ export const useAuthStore = defineStore('auth', {
             const url = getURLAPI() + `/login`;
             return new Promise((resolve, reject) => {
                 axios.post(url, credentials, { headers: this.header })
-                    .then((response) => {
+                    .then(async (response) => {
                         // console.log('Login success',response.data);
                         // console.log('TOKEN',response.data.data.token);
                         const token = response.data.data.token;
@@ -40,8 +40,14 @@ export const useAuthStore = defineStore('auth', {
                         this.updateIsAuthenticated(true);
 
                         // console.log('Logged', response.data.data.user);
-
                         const coreStore = useCoreStore();
+
+                        try {
+                            await coreStore.fetchConfig();
+                        } catch (error) {
+                            console.error('Error fetching config:', error);
+                        }
+
                         coreStore.user = response.data.data.user;
                         localStorage.setItem('user', JSON.stringify(coreStore.user));
 
@@ -61,9 +67,13 @@ export const useAuthStore = defineStore('auth', {
                             this.updateIsAuthenticated(false);
                             localStorage.removeItem('auth');
                             localStorage.removeItem('user');
+                            localStorage.removeItem('config');
+                            localStorage.removeItem('simulationStarted');
 
                             const coreStore = useCoreStore();
                             coreStore.user = null;
+                            coreStore.config = null;
+                            coreStore.simulationStarted = false;
                             resolve(response.data.data);
                         },
                     )

@@ -8,7 +8,10 @@ export const useCoreStore = defineStore('core', {
     state: () => ({
         user: JSON.parse(localStorage.getItem('user')) || null,
         isLoading: false,
+        config: {},
+        simulationStarted: false,
     }),
+    persist: true,
     actions: {
         async fetchUser() {
             const url = getURLAPI() + `/user/me`;
@@ -53,6 +56,40 @@ export const useCoreStore = defineStore('core', {
                 });
             });
         },
+
+        // Config information
+        async fetchConfig() {
+            const url = getURLAPI() + `/config`;
+            const authStore = useAuthStore();
+            return new Promise((resolve, reject) => {
+                axios.get(url, {
+                    headers: authStore.getHeader,
+                })
+                .then((response) => {
+                    this.config = response.data.data;
+                    localStorage.setItem('config', JSON.stringify(this.config));
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+            });
+        },
+
+        // Start the simulation
+        simulateStart() {
+            const url = getURLAPI() + `/flight/simulate/start`;
+            const authStore = useAuthStore();
+            return new Promise((resolve, reject) => {
+                axios.post(url, {}, { headers: authStore.getHeader })
+                .then((response) => {
+                    resolve(response.data);
+                })
+                .catch((error) => {
+                    reject(error);
+                });
+            });
+        }
 
     },
 });

@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FlightController;
 use App\Http\Controllers\WeatherController;
+use App\Http\Controllers\ConfigController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,8 +28,9 @@ Route::middleware(['correct.headers'])->group(function () {
 
     Route::middleware(['auth:api'])->group(function () {
 
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/weather', [WeatherController::class, 'getWeather']);
+        Route::post('/logout',  [AuthController::class, 'logout']);
+        Route::get('/config',   [ConfigController::class, 'getConfig']);
+        Route::get('/weather',  [WeatherController::class, 'getWeather']);
 
         Route::prefix('user')->name('user.')->group(function () {
             Route::get('me',        [UserController::class, 'findMe']);

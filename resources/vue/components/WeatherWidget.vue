@@ -31,28 +31,7 @@ export default {
     data() {
         return {
             city: {},
-            cities: [
-                'Dublin', 
-                'London', 
-                'New York', 
-                'Paris', 
-                'Tokyo', 
-                'Los Angeles', 
-                'Berlin', 
-                'Sydney', 
-                'Moscow', 
-                'Rome', 
-                'Istanbul', 
-                'Cape Town', 
-                'Dubai', 
-                'Shanghai', 
-                'Toronto', 
-                'São Paulo', 
-                'Mexico City', 
-                'Mumbai', 
-                'Seoul', 
-                'Hong Kong'
-            ],
+            cities: (this.coreStore.config.weather_cities) ?? [],
             currentCityIndex: 0, // Index to track the current city
         };
     },
@@ -71,9 +50,11 @@ export default {
             this.cities = this.cities.sort(() => Math.random() - 0.5);
         },
         init() {
-            this.randomizeCities();
-            this.fetchNextCityWeather();
-            this.intervalId = setInterval(this.fetchNextCityWeather, 10000);
+            if( this.cities.length ) {
+                this.randomizeCities();
+                this.fetchNextCityWeather();
+                this.intervalId = setInterval(this.fetchNextCityWeather, 10000);
+            }
         },
         fetchNextCityWeather() {
             let vm = this;
