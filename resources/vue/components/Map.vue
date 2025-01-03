@@ -1,6 +1,7 @@
 <template>
     <div>
         <div id="map"></div>
+        <WeatherWidget />
         <!-- <pre style="position: fixed; left: 0; bottom:0; background-color: orange; z-index: 9999999;width: 300px; height: 500px; font-size: 12px; overflow: scroll;">
             {{ previousStatus }}
         </pre> -->
@@ -11,6 +12,7 @@
 import L from 'leaflet';
 import "leaflet/dist/leaflet.css";
 import echo from "@/plugins/echo";
+import WeatherWidget from "@/components/WeatherWidget.vue";
 
 export default {
     name: 'Map',
@@ -29,6 +31,9 @@ export default {
     },
     computed: {
 
+    },
+    components: {
+        WeatherWidget,
     },
     mounted() {
         this.initializeMap();
@@ -183,5 +188,6 @@ export default {
         top: -20px;
         left: -20px;
         overflow: hidden;
+        z-index: 2;
     }
 </style>
