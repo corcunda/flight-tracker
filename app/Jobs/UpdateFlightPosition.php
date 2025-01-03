@@ -175,7 +175,7 @@ class UpdateFlightPosition implements ShouldQueue
             broadcast(new FlightUpdated($broadcastData))->toOthers();
 
             // Schedule the job to repeat every x seconds
-            self::dispatch()->delay(now()->addSeconds(5));
+            self::dispatch()->delay(now()->addSeconds(config('simulation.simulation_settings.update_interval')));
         } catch (\Exception $e) {
             Log::error("Error updating flight positions: " . $e->getMessage());
         }
