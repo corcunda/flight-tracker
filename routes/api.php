@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\FlightController;
+use App\Http\Controllers\WeatherController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,8 +27,8 @@ Route::middleware(['correct.headers'])->group(function () {
 
     Route::middleware(['auth:api'])->group(function () {
 
-        
         Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/weather', [WeatherController::class, 'getWeather']);
 
         Route::prefix('user')->name('user.')->group(function () {
             Route::get('me',        [UserController::class, 'findMe']);

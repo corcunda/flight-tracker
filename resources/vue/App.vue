@@ -63,6 +63,7 @@ body{
     margin: 100px 20px 0 20px;
     min-height: calc(100vh - 100px);
     position: relative;
+    z-index: 5;
 }
 .field-wrapper{
     padding: 0 0 10px 0;
@@ -81,6 +82,7 @@ input{
 button{
     background: #00b4ff;
     background: #c932ff;
+    background: #00b5ad;
     border: 1px solid transparent;
     border-radius: 4px;
     padding: 10px 20px;
@@ -94,6 +96,7 @@ button{
 h1 {
     color: #00b4ff;
     color: #c932ff;
+    color: #00b5ad;
 }
 .ui.toast-container.top.right,
 .ui.toast-container.top.left{
