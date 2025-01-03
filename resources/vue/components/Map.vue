@@ -1,6 +1,7 @@
 <template>
     <div>
         <div id="map"></div>
+        <FlightInfo :flight="selectedFlight" />
         <WeatherWidget />
         <!-- <pre style="position: fixed; left: 0; bottom:0; background-color: orange; z-index: 9999999;width: 300px; height: 500px; font-size: 12px; overflow: scroll;">
             {{ previousStatus }}
@@ -12,6 +13,7 @@
 import L from 'leaflet';
 import "leaflet/dist/leaflet.css";
 import echo from "@/plugins/echo";
+import FlightInfo from "@/components/FlightInfo.vue";
 import WeatherWidget from "@/components/WeatherWidget.vue";
 
 export default {
@@ -27,12 +29,14 @@ export default {
             markers: {}, // Store markers for each flight
             previousStatus: {}, // Object to store previous status of flights
             isMapLoaded: false, // Flag to track if map is loaded
+            selectedFlight: null,
         };
     },
     computed: {
 
     },
     components: {
+        FlightInfo,
         WeatherWidget,
     },
     mounted() {
@@ -103,6 +107,12 @@ export default {
                     return;
                 }
 
+                // Check if the flight is the currently selected flight
+                if (this.selectedFlight && this.selectedFlight.id === id) {
+                    // Update the selected flight's details
+                    this.selectedFlight = { ...this.selectedFlight, ...flight };
+                }
+
                 // Add or update the marker for the flight
                 if (!this.markers[id]) {
                     this.createRoute(flight);
@@ -122,8 +132,20 @@ export default {
                         <b>Flight:</b> ${flight.flight_number}<br>
                         <b>From:</b> ${origin}<br>
                         <b>To:</b> ${destination}<br>
-                        <b>Status:</b> ${status}
+                        <button type="button" class="flight-btn" data-flight-id="${id}">Flight Info</button>
                     `);
+                    // Attach event listener to the button on popup open
+                    marker.on("popupopen", () => {
+                        setTimeout(() => {
+                            const button = document.querySelector(`.flight-btn[data-flight-id="${id}"]`);
+                            if (button) {
+                                button.addEventListener("click", () => {
+                                    this.trackFlight(flight); // Pass the full flight object
+                                    marker.closePopup(); // Close the popup
+                                });
+                            }
+                        }, 0);
+                    });
                     this.markers[id] = marker;
                 } else {
                     // Update the marker popup if it's already added
@@ -134,8 +156,20 @@ export default {
                         <b>Flight:</b> ${flight.flight_number}<br>
                         <b>From:</b> ${origin}<br>
                         <b>To:</b> ${destination}<br>
-                        <b>Status:</b> ${status}
+                        <button type="button" class="flight-btn" data-flight-id="${id}">Flight Info</button>
                     `);
+                    // Update the event listener on popup open
+                    marker.on("popupopen", () => {
+                        setTimeout(() => {
+                            const button = document.querySelector(`.flight-btn[data-flight-id="${id}"]`);
+                            if (button) {
+                                button.addEventListener("click", () => {
+                                    this.trackFlight(flight); // Pass the full flight object
+                                    marker.closePopup(); // Close the popup
+                                });
+                            }
+                        }, 0);
+                    });
                 }
             });
             if (!this.isMapLoaded) {
@@ -172,6 +206,11 @@ export default {
 
         isValidLatLng(lat, lng) {
             return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+        },
+
+        trackFlight(flight) {
+            this.selectedFlight = flight;
+            // console.log("Selected Flight:", this.selectedFlight);
         },
     },
     beforeUnmount() {

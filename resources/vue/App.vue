@@ -93,6 +93,13 @@ button{
     font-family: "Roboto", serif;
     cursor: pointer;
 }
+button.flight-btn{
+    padding: 5px 10px;
+    background: #00b5ad;
+    color: #fff;
+    font-weight: 400;
+    margin-top: 10px;
+}
 h1 {
     color: #00b4ff;
     color: #c932ff;
