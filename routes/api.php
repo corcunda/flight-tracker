@@ -35,7 +35,7 @@ Route::middleware(['correct.headers'])->group(function () {
         Route::prefix('user')->name('user.')->group(function () {
             Route::get('me',        [UserController::class, 'findMe']);
             Route::get('{id?}',     [UserController::class, 'index']);
-            // Route::put('{id}',   [UserController::class, 'update']);
+            Route::put('',          [UserController::class, 'update']);
             Route::delete('',       [UserController::class, 'destroy']);
         });
 

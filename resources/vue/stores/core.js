@@ -39,6 +39,26 @@ export const useCoreStore = defineStore('core', {
             }
         },
 
+        async updateUser(updatedUser) {
+            const url = getURLAPI() + `/user`;
+            const authStore = useAuthStore();
+
+            try {
+                const response = await axios.put(url, updatedUser, {
+                    headers: authStore.getHeader,
+                });
+
+                // Assuming the response contains the updated user data
+                this.user = response.data.data.user;
+                localStorage.setItem('user', JSON.stringify(this.user));
+
+                return response.data;
+            } catch (error) {
+                console.error('Error updating user info:', error);
+                throw error;
+            }
+        },
+
         // Weather functionality
         async fetchWeather(city, country = null) {
             const url = getURLAPI() + `/weather`;
