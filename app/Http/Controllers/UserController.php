@@ -134,10 +134,43 @@ class UserController extends Controller
 
 
     /**
+     * Update the specified resource from storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request)
+    {
+        $request->validate($this->rulesEdit());
+
+        try {
+
+            $user = $request->user();
+            if( !$user ) {
+                return Controller::APIJsonReturn(['user' => 'User not found.'], 'error', 400);
+            }
+
+            $user->name = $request->name;
+
+            // If password is provided and matches confirmation, update password
+            if ($request->has('password') && $request->password) {
+                $user->password = bcrypt($request->password); // Hash password before saving
+            }
+
+            $user->save();
+            $data['user'] = new UserResource($user);
+            return Controller::APIJsonReturn($data, 'success');
+
+        } catch (\Exception $e) {
+            return Controller::APIJsonReturn(['errors' => $e->getMessage()], 'error', 400);
+        }
+    }
+
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Request $request)
@@ -162,7 +195,7 @@ class UserController extends Controller
 
 
 
-     /**
+    /**
      * Validation rules
      */
     public function rules()
@@ -171,6 +204,19 @@ class UserController extends Controller
             'name' => 'required|string',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+        ];
+    }
+
+
+    /**
+     * Validation rules
+     */
+    public function rulesEdit()
+    {
+        return [
+            'name' => 'required|string|min:3',
+            'password' => 'nullable|string|min:4',
+            'password_confirmation' => 'nullable|string|same:password|required_with:password',
         ];
     }
 
