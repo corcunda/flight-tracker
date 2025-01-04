@@ -104,6 +104,25 @@ return [
             'status' => 'scheduled',
             'is_delayed' => false,
         ],
+        [
+            'flight_number' => 'FL006',
+            'airline' => 'Airline A',
+            'origin' => 'New York',
+            'destination' => 'Rome',
+            'speed' => 800, // km/h
+            'color_plane' => 'blue',
+            'color_path' => 'lightblue',
+            'origin_latitude' => 40.7128,
+            'origin_longitude' => -74.0060,
+            'destination_latitude' => 41.9028,
+            'destination_longitude' => 12.4964,
+            'specifics' => [ // example of a flight that will start at 95% completion of the route
+                'type' => 'on_route',
+                'value' => 30,
+            ],
+            'status' => 'in_progress', // On the route already
+            'is_delayed' => false,
+        ],
     ],
 
 
