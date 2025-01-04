@@ -1,6 +1,7 @@
 <template>
     <div>
         <div id="map"></div>
+        <FlightSearch v-if="flightsData.length" :flightsData="flightsData" @filtered-flights="handleFilteredFlights" />
         <FlightInfo :flight="selectedFlight" />
         <WeatherWidget />
         <!-- <pre style="position: fixed; left: 0; bottom:0; background-color: orange; z-index: 9999999;width: 300px; height: 500px; font-size: 12px; overflow: scroll;">
@@ -13,6 +14,7 @@
 import L from 'leaflet';
 import "leaflet/dist/leaflet.css";
 import echo from "@/plugins/echo";
+import FlightSearch from "@/components/FlightSearch.vue";
 import FlightInfo from "@/components/FlightInfo.vue";
 import WeatherWidget from "@/components/WeatherWidget.vue";
 
@@ -27,6 +29,9 @@ export default {
             },
             // showMe: {}, // dev
             markers: {}, // Store markers for each flight
+            polylineMarkers: {},
+            flightsData: [], // Store all flight data
+            filteredFlights: [],
             previousStatus: {}, // Object to store previous status of flights
             isMapLoaded: false, // Flag to track if map is loaded
             selectedFlight: null,
@@ -36,6 +41,7 @@ export default {
 
     },
     components: {
+        FlightSearch,
         FlightInfo,
         WeatherWidget,
     },
@@ -46,7 +52,17 @@ export default {
             .listen(".flight.updated", (data) => {
                 console.log("Event Received:", data.data);
                 // this.showMe = data.data;
-                this.updateMap(data.data);
+                // Update flightsData with the new flight data
+                let flights = data.data;
+                this.flightsData = flights;
+                if (this.filteredFlights.length) {
+                    // Extract IDs from this.filteredFlights
+                    const filteredIds = this.filteredFlights.map(flight => flight.id);
+
+                    // Filter this.flightsData to include only those with matching IDs
+                    flights = this.flightsData.filter(flight => filteredIds.includes(flight.id));
+                }
+                this.updateMap(flights);
             });
     },
     methods: {
@@ -65,6 +81,19 @@ export default {
         },
 
         updateMap(flightData) {
+
+            // if (this.filteredFlights.length) {
+                Object.values(this.markers).forEach(marker => {
+                    this.map.removeLayer(marker);
+                    this.markers = {};
+                });
+
+                Object.values(this.polylineMarkers).forEach(poly => {
+                    this.map.removeLayer(poly);
+                    this.polylineMarkers = {};
+                });
+            // }
+
             flightData.forEach(flight => {
                 const { id, current_latitude, current_longitude, origin, destination, status } = flight;
 
@@ -190,7 +219,9 @@ export default {
                     [oLat, oLon],
                     [dLat, dLon],
                 ];
-                L.polyline(flightPath, { color: paCo, weight: 3 }).addTo(this.map);
+                // L.polyline(flightPath, { color: paCo, weight: 3 }).addTo(this.map);
+                const polyline = L.polyline(flightPath, { color: paCo, weight: 3 }).addTo(this.map);
+                this.polylineMarkers[flight.id] = polyline;  // Store the polyline by flight ID
             }
 
         },
@@ -211,6 +242,26 @@ export default {
         trackFlight(flight) {
             this.selectedFlight = flight;
             // console.log("Selected Flight:", this.selectedFlight);
+        },
+
+        // Handle the event filtering flights
+        handleFilteredFlights(data) {
+            let flights = data;
+            this.filteredFlights = data;
+            if (!this.filteredFlights.length) {
+                flights = this.flightsData;
+            }
+            else {
+                // Extract IDs from this.filteredFlights
+                const filteredIds = this.filteredFlights.map(flight => flight.id);
+
+                // Check if selectedFlight's ID matches any of the filtered IDs
+                const selectedFlightId = this.selectedFlight?.id;
+                if (!filteredIds.includes(selectedFlightId)) {
+                    this.selectedFlight = null;
+                }
+            }
+            this.updateMap(flights);
         },
     },
     beforeUnmount() {

@@ -36,9 +36,10 @@ export default {
 <style scoped>
 .flight-info {
     position: fixed;
-    z-index: 2;
+    z-index: 10;
     bottom: 10px;
     right: 10px;
+    transition: all .3s ease;
 }
 .flight-info-wrapper{
     position: relative;
@@ -62,6 +63,15 @@ export default {
 }
 .flight-info p span{
     font-style: italic;
+}
+
+@media only screen and (max-width: 768px) {
+    .flight-info{
+        bottom: 0;
+        right: 5px;
+        width: calc(100% - 10px);
+    }
+
 }
 </style>
   

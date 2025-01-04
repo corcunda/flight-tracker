@@ -107,7 +107,7 @@ h1 {
 }
 .ui.toast-container.top.right,
 .ui.toast-container.top.left{
-    top: 85px !important;
+    top: 140px !important;
 }
 </style>
 <style scoped>
