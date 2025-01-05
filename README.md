@@ -46,12 +46,6 @@ To install and set up the project, follow these steps:
     PUSHER_SCHEME=https
     PUSHER_APP_CLUSTER=
     ```
-5. Install the necessary dependencies:
-
-    ```bash
-    npm install
-    ```
-
 ---
 
 ## Usage
@@ -85,17 +79,34 @@ PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=generated_passport_secret
 php artisan config:clear
 php artisan cache:clear
 ```
+**f)** It is also important to change the owner group of the files that will be created by the installation:
+```
+sudo chown www-data:www-data storage/oauth-public.key
+sudo chown www-data:www-data storage/oauth-private.key
+```
 
-3. **Access the application**:  
+3. **Install the necessary dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+4. **Build the application:**
+
+    ```bash
+    npm run build
+    ```
+
+5. **Access the application**:  
 After your docker is running, navigate on your browser:
 ```
 http://localhost:8484/
 ```
 
-3. **Stop the application**:  
+6. **Stop the application**:  
 On the same terminal that is running the docker, you can press **CTRL-C** to stop it.
 
-4. **Remove the application**:  
+7. **Remove the application**:  
 To remove the application from docker you can run on the terminal:
 ```
 docker-compose down
