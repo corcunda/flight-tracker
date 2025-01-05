@@ -6,6 +6,14 @@ set -e
 # Log a message to indicate the script is starting
 echo "Starting entrypoint script..."
 
+# Install jq if not already installed
+# if ! command -v jq &> /dev/null; then
+#     echo "'jq' is not installed. Installing..."
+#     apt-get update && apt-get install -y jq && rm -rf /var/lib/apt/lists/*
+# else
+#     echo "'jq' is already installed. Skipping..."
+# fi
+
 # Ensure correct permissions for storage and bootstrap/cache directories
 echo "Setting permissions for storage and bootstrap/cache..."
 chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
@@ -47,6 +55,57 @@ php artisan migrate --seed || {
     echo "Database migration failed. Exiting..."
     exit 1
 }
+
+# Check if PASSPORT_PERSONAL_ACCESS_CLIENT_ID and PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET exist in .env and are not empty
+# if ! grep -q "^PASSPORT_PERSONAL_ACCESS_CLIENT_ID=" .env || ! grep -q "^PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=" .env || \
+#    [ -z "$(grep "^PASSPORT_PERSONAL_ACCESS_CLIENT_ID=" .env | cut -d '=' -f 2)" ] || \
+#    [ -z "$(grep "^PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=" .env | cut -d '=' -f 2)" ]; then
+
+#     echo "Laravel Passport not set up or missing in .env. Proceeding with installation..."
+
+#     # Install Passport
+#     php artisan passport:install || {
+#         echo "Failed to install Passport. Exiting..."
+#         exit 1
+#     }
+
+#     # Retrieve the Client ID and Secret
+#     echo "Retrieving Passport Client IDs and Secrets..."
+#     PERSONAL_ACCESS_CLIENT=$(php artisan tinker --execute="echo json_encode(DB::table('oauth_clients')->where('personal_access_client', 1)->first());")
+
+#     if [ -z "$PERSONAL_ACCESS_CLIENT" ]; then
+#         echo "Failed to retrieve Passport client data. Exiting..."
+#         exit 1
+#     fi
+
+#     CLIENT_ID=$(echo $PERSONAL_ACCESS_CLIENT | jq -r '.id')
+#     CLIENT_SECRET=$(echo $PERSONAL_ACCESS_CLIENT | jq -r '.secret')
+
+#     if [ -z "$CLIENT_ID" ] || [ -z "$CLIENT_SECRET" ]; then
+#         echo "Client ID or Secret is missing. Exiting..."
+#         exit 1
+#     fi
+
+#     # Add or update the environment variables directly in .env
+#     sed -i "/^PASSPORT_PERSONAL_ACCESS_CLIENT_ID=/d" .env
+#     sed -i "/^PASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=/d" .env
+#     echo -e "\nPASSPORT_PERSONAL_ACCESS_CLIENT_ID=$CLIENT_ID" >> .env
+#     echo -e "\nPASSPORT_PERSONAL_ACCESS_CLIENT_SECRET=$CLIENT_SECRET" >> .env
+#     echo "Updated .env with Passport credentials."
+
+#     # Clear and cache configurations
+#     echo "Clearing and caching configurations..."
+#     php artisan config:clear
+#     php artisan cache:clear
+#     php artisan config:cache
+
+#     echo "Laravel Passport installation completed!"
+
+# else
+#     echo "Passport is already set up in .env. Skipping installation..."
+# fi
+
+
 
 # Gracefully restart queue workers to stop any running jobs before starting new ones
 echo "Stopping all running queue workers..."
